@@ -2,195 +2,129 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>식결(食結) - 사주 맞춤 식단 처방</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>식결(食結) - 나만의 사주 식단 보전</title>
     <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
     <style>
-        :root {
-            --wood: #4CAF50; --fire: #F44336; --earth: #FFC107;
-            --metal: #9E9E9E; --water: #2196F3; --bg: #F8F9FA;
-        }
-        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg); margin: 0; padding: env(safe-area-inset-top) 20px 40px; color: #333; line-height: 1.6; }
-        .app-container { max-width: 450px; margin: auto; background: white; border-radius: 30px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
-        .header { background: #1a1a1a; color: white; padding: 40px 20px; text-align: center; }
-        .header h1 { margin: 0; font-size: 1.8rem; letter-spacing: 4px; font-weight: 800; }
-        
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap');
+        :root { --paper: #f4f1ea; --ink: #2c2c2c; --wood: #5d7a66; --fire: #a64e4e; --earth: #c4a46d; --metal: #8a8a8a; --water: #4e657a; }
+        body { font-family: 'Noto Serif KR', serif; background-color: #e0ddd5; margin: 0; padding: 20px; color: var(--ink); }
+        .app-container { max-width: 420px; margin: auto; background: var(--paper); border: 1px solid #d1cdbf; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+        .header { padding: 40px 20px; text-align: center; border-bottom: 1px double #d1cdbf; }
         .content { padding: 25px; }
-        .input-card { background: #fdfdfd; border: 1px solid #eee; padding: 20px; border-radius: 20px; margin-bottom: 25px; }
-        label { font-size: 0.8rem; color: #888; display: block; margin-bottom: 8px; font-weight: 700; }
-        input, select { width: 100%; border: none; background: #f0f0f0; padding: 15px; border-radius: 12px; margin-bottom: 15px; font-size: 1rem; box-sizing: border-box; }
-        
-        button { width: 100%; padding: 18px; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn-main { background: #1a1a1a; color: white; }
-        .btn-main:hover { background: #333; }
-        
-        #resultArea { display: none; margin-top: 20px; animation: fadeInUp 0.6s ease; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        #captureArea { padding: 20px; background: white; border-radius: 20px; }
-        .chart-container { position: relative; height: 280px; margin: 10px 0; }
-        
-        .card { padding: 20px; border-radius: 18px; margin-top: 15px; }
-        .solution { background: #f0f7f0; border-left: 5px solid var(--wood); }
-        .avoid { background: #fff5f5; border-left: 5px solid var(--fire); display: none; }
-        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; color: white; font-size: 0.75rem; font-weight: bold; margin-bottom: 10px; }
-        
-        .action-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 25px; }
-        .btn-sub { background: #eee; color: #555; font-size: 0.9rem; }
-        .btn-save { background: #ff5722; color: white; font-size: 0.9rem; }
-
-        footer { text-align: center; font-size: 0.7rem; color: #ccc; margin-top: 30px; }
+        input, select { width: 100%; border: none; border-bottom: 1px solid #ccc; background: transparent; padding: 12px 5px; margin-bottom: 15px; font-family: inherit; font-size: 1rem; outline: none; box-sizing: border-box; }
+        button { width: 100%; padding: 16px; border: 1px solid var(--ink); background: var(--ink); color: white; cursor: pointer; font-family: inherit; transition: 0.3s; }
+        #resultArea { display: none; margin-top: 30px; }
+        .chart-box { height: 240px; margin: 20px 0; }
+        .food-info { border-left: 3px solid var(--ink); padding-left: 15px; margin: 25px 0; }
+        .diary-btns { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin: 20px 0; }
+        .diary-btns button { padding: 8px 2px; font-size: 0.7rem; border-radius: 4px; }
+        #journalCapture { display: none; width: 380px; padding: 40px; background: var(--paper); border: 2px solid var(--ink); color: var(--ink); }
+        .sungsun-box { margin-top: 30px; padding: 15px; border: 1px double var(--ink); text-align: center; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <div class="header">
-        <h1>食 結</h1>
-        <p style="opacity: 0.6; font-size: 0.85rem; margin-top: 8px;">나의 사주 체질에 맞는 운명의 음식</p>
-    </div>
-
+    <div class="header"><h1>食 結</h1><p>사주와 일진으로 맺어주는 처방</p></div>
     <div class="content">
-        <div class="input-card">
-            <label>태어난 날짜</label>
-            <input type="date" id="birthDate" value="1995-06-15">
-            <label>태어난 시간</label>
-            <select id="birthTime">
-                <option value="1">자시 (00:00~)</option><option value="3">축시 (01:30~)</option>
-                <option value="5">인시 (03:30~)</option><option value="7">묘시 (05:30~)</option>
-                <option value="9">진시 (07:30~)</option><option value="11">사시 (09:30~)</option>
-                <option value="13">오시 (11:30~)</option><option value="15">미시 (13:30~)</option>
-                <option value="17">신시 (15:30~)</option><option value="19">유시 (17:30~)</option>
-                <option value="21">술시 (19:30~)</option><option value="23">해시 (21:30~)</option>
-            </select>
-            <button class="btn-main" onclick="runSikgyeol()">나의 식결 결과보기</button>
-        </div>
+        <input type="text" id="userNameInput" placeholder="이름 (또는 호)를 입력하세요">
+        <input type="date" id="birthDate" value="1995-01-01">
+        <select id="birthTime">
+            <option value="1">子시 (00:30~)</option><option value="11">巳시 (09:30~)</option>
+            <option value="13">午시 (11:30~)</option><option value="23">亥시 (21:30~)</option>
+        </select>
+        <button onclick="analyze()">나의 기운 분석</button>
 
         <div id="resultArea">
-            <div id="captureArea">
-                <h3 style="text-align: center; margin: 0;">나의 오행 에너지 보고서</h3>
-                <p id="userName" style="text-align:center; font-size:0.75rem; color:#999; margin-bottom:10px;"></p>
-                
-                <div class="chart-container">
-                    <canvas id="energyChart"></canvas>
+            <div id="captureArea" style="background:var(--paper); padding:15px;">
+                <div id="dailyFortune" style="text-align:center; font-size:0.8rem; margin-bottom:15px; opacity:0.7;"></div>
+                <div class="chart-box"><canvas id="energyChart"></canvas></div>
+                <div class="food-info">
+                    <div id="resTitle" style="font-size:1.2rem; font-weight:700; color:var(--fire);"></div>
+                    <div id="resFood" style="font-size:0.9rem; margin-top:10px;"></div>
                 </div>
-                
-                <div class="card solution">
-                    <span id="lackBadge" class="badge">부족한 기운 보충</span>
-                    <h2 id="resTitle" style="margin: 5px 0; font-size: 1.2rem;"></h2>
-                    <p id="resDesc" style="font-size: 0.9rem; color: #555; margin-bottom: 10px;"></p>
-                    <div style="background: white; padding: 12px; border-radius: 10px; border: 1px solid #e0e0e0;">
-                        <small style="color: #999;">추천 식재료/메뉴</small>
-                        <div id="resFood" style="font-weight: bold; color: #1a1a1a; font-size: 1rem;"></div>
-                    </div>
-                </div>
-
-                <div class="card avoid" id="avoidArea">
-                    <span class="badge" style="background: #ff5252;">과유불급 주의</span>
-                    <h3 id="avoidTitle" style="margin: 5px 0; font-size: 1rem; color: #d32f2f;"></h3>
-                    <p id="avoidDesc" style="font-size: 0.85rem; color: #666;"></p>
-                </div>
-                <p style="text-align:center; font-size:0.6rem; color:#eee; margin-top:15px;">© SIKGYEOL All rights reserved.</p>
             </div>
+            
+            <button style="background:#fff; color:#2c2c2c; margin-bottom:10px;" onclick="window.open('https://m.map.naver.com/search2/search.naver?query='+encodeURIComponent(currentKeyword))">📍 주변 맞춤 맛집 검색</button>
 
-            <div class="action-group">
-                <button class="btn-save" onclick="saveAsImage()">📷 이미지 저장</button>
-                <button class="btn-sub" onclick="shareLink()">🔗 링크 복사</button>
+            <div class="diary-btns">
+                <button style="background:#f0f7f0; color:#5d7a66;" onclick="addDiary('목')">🌿목</button>
+                <button style="background:#fff5f5; color:#a64e4e;" onclick="addDiary('화')">🔥화</button>
+                <button style="background:#fffdf5; color:#c4a46d;" onclick="addDiary('토')">⛰️토</button>
+                <button style="background:#f5f5f5; color:#8a8a8a;" onclick="addDiary('금')">💎금</button>
+                <button style="background:#f5f8fa; color:#4e657a;" onclick="addDiary('수')">🌊수</button>
             </div>
+            <div id="balanceAdvice" style="text-align:center; font-size:0.8rem; margin:10px 0; font-weight:700;"></div>
+            <button onclick="saveJournal()" style="background:#8e735b; border:none;">📜 오늘의 식단 일기장 저장</button>
         </div>
     </div>
-    <footer>Powered by 식결(食結)</footer>
+</div>
+
+<div id="journalContainer" style="position:fixed; left:-9999px;">
+    <div id="journalCapture">
+        <div id="jDate" style="text-align:right; font-size:0.8rem;"></div>
+        <h2 style="text-align:center; letter-spacing:10px;">食單 日記</h2>
+        <div id="jList" style="margin:30px 0; min-height:100px; border-top:1px solid #2c2c2c; padding-top:20px;"></div>
+        <div class="sungsun-box"><div id="jSWord" style="font-size:1.3rem; font-weight:700;"></div><div id="jSMean" style="font-size:0.8rem;"></div></div>
+        <div id="jUser" style="text-align:right; margin-top:30px; font-weight:700;"></div>
+    </div>
 </div>
 
 <script>
-    let myChart = null;
-
-    const contentData = {
-        '목': { title: '생기를 깨우는 목(木) 식단', desc: '간 기운을 돕는 신맛과 초록색 음식이 필요합니다.', food: '부추, 샐러드, 매실차, 키위', color: '#4CAF50', avoid: '지나치게 신 음식, 생식' },
-        '화': { title: '순환을 돕는 화(火) 식단', desc: '심장 기운을 보강하는 쓴맛과 붉은색 음식이 좋습니다.', food: '토마토, 수수밥, 쌉싸름한 나물, 자몽', color: '#F44336', avoid: '매운 음식, 술, 고카페인' },
-        '토': { title: '안정을 주는 토(土) 식단', desc: '위장을 편안하게 하는 단맛과 노란색 음식이 보약입니다.', food: '단호박 죽, 고구마, 감자, 꿀', color: '#FFC107', avoid: '지나치게 단 음식, 밀가루' },
-        '금': { title: '면역을 높이는 금(金) 식단', desc: '폐를 맑게 하는 매운맛과 흰색 음식을 섭취하세요.', food: '도라지즙, 무국, 양파, 마늘, 배', color: '#9E9E9E', avoid: '딱딱한 음식, 극단적으로 매운 맛' },
-        '수': { title: '정화해주는 수(水) 식단', desc: '신장 기운을 돕는 짠맛과 검은색 음식이 필요합니다.', food: '미역국, 검은콩 조림, 김, 블루베리', color: '#2196F3', avoid: '짠 음식, 차가운 얼음물' }
+    let chart=null, baseCounts={}, diaryCounts={'목':0,'화':0,'토':0,'금':0,'수':0}, diaryLog=[], currentKeyword='';
+    const data={
+        '목':{t:'木: 푸른 생기', f:'부추, 미나리, 닭고기, 매실', c:'#5d7a66', k:'샐러드 보리밥 맛집', s:{w:'枯木逢春', m:'마른 나무가 봄을 만나듯 생기가 필요한 때'}},
+        '화':{t:'火: 붉은 온기', f:'토마토, 고추, 소고기, 자몽', c:'#a64e4e', k:'소고기구이 파스타 맛집', s:{w:'燈火可親', m:'따뜻한 등불을 가까이하듯 열정이 필요한 때'}},
+        '토':{t:'土: 황색의 중심', f:'단호박, 고구마, 감자, 두부', c:'#c4a46d', k:'한정식 청국장 맛집', s:{w:'厚德載物', m:'땅처럼 두터운 덕으로 안정이 필요한 때'}},
+        '금':{t:'金: 백색의 결실', f:'도라지, 무, 양파, 생선회', c:'#8a8a8a', k:'일식 조개구이 설렁탕', s:{w:'切磋琢磨', m:'자신을 단단하고 예리하게 가다듬을 때'}},
+        '수':{t:'水: 검은 지혜', f:'검은콩, 미역, 돼지고기, 포도', c:'#4e657a', k:'흑돼지 미역국 해산물', s:{w:'上善若水', m:'물과 같이 유연하고 깊은 지혜가 필요한 때'}}
     };
 
-    function runSikgyeol() {
-        const date = document.getElementById('birthDate').value;
-        const hour = document.getElementById('birthTime').value;
-        if(!date) return alert("생년월일을 입력해주세요!");
-
-        // 1. 사주 분석
-        const d = new Date(date);
-        const solar = Solar.fromYmdHms(d.getFullYear(), d.getMonth()+1, d.getDate(), hour, 0, 0);
-        const eightChars = solar.getLunar().getEightChar();
-        const chars = [eightChars.getYearGan(), eightChars.getYearZhi(), eightChars.getMonthGan(), eightChars.getMonthZhi(), eightChars.getDayGan(), eightChars.getDayZhi(), eightChars.getTimeGan(), eightChars.getTimeZhi()];
-
-        const counts = { '목': 0, '화': 0, '토': 0, '금': 0, '수': 0 };
-        const map = { '甲':'목','乙':'목','寅':'목','卯':'목','丙':'화','丁':'화','巳':'화','午':'화','戊':'토','己':'토','辰':'토','戌':'토','丑':'토','未':'토','庚':'금','辛':'금','申':'금','酉':'금','壬':'수','癸':'수','亥':'수','子':'수' };
-        chars.forEach(c => { if(map[c]) counts[map[c]]++; });
-
-        // 2. 결과 도출
-        const sorted = Object.entries(counts).sort((a, b) => a[1] - b[1]);
-        const lack = sorted[0][0];
-        const excess = sorted[sorted.length - 1][0];
-
-        // 3. UI 업데이트
-        drawChart(counts);
-        displayResult(lack, excess, counts[excess]);
+    function analyze(){
+        const b=document.getElementById('birthDate').value; if(!b) return;
+        const solar=Solar.fromYmdHms(new Date(b).getFullYear(), new Date(b).getMonth()+1, new Date(b).getDate(), document.getElementById('birthTime').value,0,0);
+        const tLunar=Solar.fromDate(new Date()).getLunar();
+        const map={'甲':'목','乙':'목','寅':'목','卯':'목','丙':'화','丁':'화','巳':'화','午':'화','戊':'토','己':'토','辰':'토','戌':'토','丑':'토','未':'토','庚':'금','辛':'금','申':'금','酉':'금','壬':'수','癸':'수','亥':'수','子':'수'};
+        baseCounts={'목':0,'화':0,'토':0,'금':0,'수':0};
+        const my8=solar.getLunar().getEightChar();
+        [my8.getYearGan(),my8.getYearZhi(),my8.getMonthGan(),my8.getMonthZhi(),my8.getDayGan(),my8.getDayZhi(),my8.getTimeGan(),my8.getTimeZhi(),tLunar.getDayGan(),tLunar.getDayZhi()].forEach(c=>{if(map[c])baseCounts[map[c]]++;});
         
-        document.getElementById('userName').innerText = `${date} 분석 결과`;
-        document.getElementById('resultArea').style.display = 'block';
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        const lack=Object.entries(baseCounts).sort((a,b)=>a[1]-b[1])[0][0];
+        currentKeyword=data[lack].k;
+        document.getElementById('dailyFortune').innerText=`오늘의 일진: ${tLunar.getDayInGanZhi()}일 | 분석 기반: 사주 8자 + 일진 2자`;
+        document.getElementById('resTitle').innerText=data[lack].t;
+        document.getElementById('resFood').innerHTML=data[lack].f;
+        drawChart(baseCounts);
+        document.getElementById('resultArea').style.display='block';
     }
 
-    function drawChart(counts) {
-        const ctx = document.getElementById('energyChart').getContext('2d');
-        if(myChart) myChart.destroy();
-        myChart = new Chart(ctx, {
-            type: 'polarArea',
-            data: {
-                labels: ['목', '화', '토', '금', '수'],
-                datasets: [{
-                    data: [counts['목'], counts['화'], counts['토'], counts['금'], counts['수']],
-                    backgroundColor: ['#4CAF50aa', '#F44336aa', '#FFC107aa', '#9E9E9Eaa', '#2196F3aa'],
-                    borderWidth: 0
-                }]
-            },
-            options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } } }
-        });
+    function drawChart(c){
+        const ctx=document.getElementById('energyChart').getContext('2d');
+        if(chart) chart.destroy();
+        chart=new Chart(ctx,{type:'radar',data:{labels:['목','화','토','금','수'],datasets:[{data:[c['목'],c['화'],c['토'],c['금'],c['수']],backgroundColor:'rgba(44,44,44,0.1)',borderColor:'#2c2c2c',borderWidth:1}]},options:{scales:{r:{beginAtZero:true,max:6,ticks:{display:false}}},plugins:{legend:{display:false}}}});
     }
 
-    function displayResult(lack, excess, exCount) {
-        const L = contentData[lack];
-        document.getElementById('lackBadge').style.backgroundColor = L.color;
-        document.getElementById('resTitle').innerText = L.title;
-        document.getElementById('resDesc').innerText = L.desc;
-        document.getElementById('resFood').innerText = L.food;
-
-        const avoidSection = document.getElementById('avoidArea');
-        if (exCount >= 3) {
-            const E = contentData[excess];
-            avoidSection.style.display = 'block';
-            document.getElementById('avoidTitle').innerText = `${excess} 기운이 너무 강합니다`;
-            document.getElementById('avoidDesc').innerText = `${E.avoid}은 주의하는 것이 좋습니다.`;
-        } else {
-            avoidSection.style.display = 'none';
-        }
+    function addDiary(type){
+        diaryCounts[type]++;
+        diaryLog.push({t:type, time:new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})});
+        const final={}; for(let k in baseCounts) final[k]=baseCounts[k]+diaryCounts[k];
+        const sorted=Object.entries(final).sort((a,b)=>a[1]-b[1]);
+        document.getElementById('balanceAdvice').innerText= (sorted[sorted.length-1][1]-sorted[0][1] <=1) ? "☯️ 완벽한 중화(中和) 상태입니다!" : `부족한 '${sorted[0][0]}' 기운을 더 채워보세요.`;
     }
 
-    function saveAsImage() {
-        html2canvas(document.querySelector("#captureArea"), { scale: 2 }).then(canvas => {
-            const link = document.createElement('a');
-            link.download = `식결_보고서_${new Date().getTime()}.png`;
-            link.href = canvas.toDataURL();
-            link.click();
-        });
-    }
-
-    function shareLink() {
-        navigator.clipboard.writeText(window.location.href).then(() => alert("링크가 복사되었습니다!"));
+    function saveJournal(){
+        const name=document.getElementById('userNameInput').value||"귀하";
+        document.getElementById('jDate').innerText=new Date().toLocaleDateString();
+        document.getElementById('jUser').innerText=`${name} 님의 식결 보전`;
+        document.getElementById('jList').innerHTML=diaryLog.map(l=>`<div style="margin-bottom:10px;"><b>${l.t}기운</b> 섭취 (${l.time})</div>`).join('');
+        const sorted=Object.entries(baseCounts).map(([k,v])=>[k,v+diaryCounts[k]]).sort((a,b)=>a[1]-b[1]);
+        const s = (sorted[sorted.length-1][1]-sorted[0][1]<=1) ? {w:'中和之氣',m:'조화를 이룬 상태'} : data[sorted[0][0]].s;
+        document.getElementById('jSWord').innerText=s.word||s.w; document.getElementById('jSMean').innerText=s.mean||s.m;
+        const target=document.getElementById('journalCapture'); target.style.display='block';
+        html2canvas(target,{scale:2}).then(canvas=>{ const a=document.createElement('a'); a.download='식결_일기.png'; a.href=canvas.toDataURL(); a.click(); target.style.display='none'; });
     }
 </script>
 </body>
