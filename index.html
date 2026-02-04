@@ -204,7 +204,53 @@
     };
 
     // 설문 제어
-    function showModal() { document.getElementById('diagModal').style.display='flex'; currentStep=1; updateStep(); }
+        // 설문 제어 (수정된 버전)
+    function showModal() { 
+        document.getElementById('diagModal').style.display='flex'; 
+        currentStep = 1; 
+        // 기존 체크된 라디오 버튼 초기화
+        document.querySelectorAll('input[type="radio"]').forEach(rb => rb.checked = false);
+        updateStep(); 
+    }
+    
+    function nextStep(val, name) {
+        // 1. 현재 단계의 라디오 버튼을 강제로 체크
+        const radio = document.querySelector(`input[name="${name}"][value="${val}"]`);
+        if (radio) radio.checked = true;
+
+        // 2. 마지막 단계인지 확인 후 이동
+        if(currentStep < totalSteps) { 
+            currentStep++; 
+            updateStep(); 
+        } else { 
+            startAnalysis(); 
+        }
+    }
+
+    function skipStep() {
+        if(currentStep < totalSteps) { 
+            currentStep++; 
+            updateStep(); 
+        } else { 
+            startAnalysis(); 
+        }
+    }
+
+    function updateStep() {
+        // 제목 업데이트
+        document.getElementById('surveyTitle').innerText = `체질 진단 (${currentStep}/${totalSteps})`;
+        
+        // 모든 항목 숨기고 현재 단계만 보이기
+        const items = document.querySelectorAll('.survey-item');
+        items.forEach((item, idx) => {
+            if (idx + 1 === currentStep) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
     
     function nextStep(val, name) {
         document.querySelector(`input[name="${name}"][value="${val}"]`).checked = true;
