@@ -36,7 +36,8 @@
         }
 
         /* 설문지 스타일 */
-        .survey-item { display: none; animation: fadeIn 0.4s; }
+        .survey-item { display: none; }
+        .survey-item.active { display: block; animation: fadeIn 0.4s; }
         .survey-question { font-size: 1rem; font-weight: 700; margin-bottom: 20px; color: #333; line-height: 1.4; }
         .option-group label {
             display: block; padding: 18px; border: 1px solid #d1cdbf; background: #fff; 
@@ -44,7 +45,7 @@
         }
         .option-group input[type="radio"] { display: none; }
         .option-group label:active { transform: scale(0.98); background: #f9f7f0; }
-        .option-group label:has(input:checked) { background: var(--ink); color: #fff; border-color: var(--ink); }
+        .option-group label.checked { background: var(--ink); color: #fff; border-color: var(--ink); }
         .skip-button { background: none; color: #999; text-decoration: underline; border: none; padding: 10px; font-size: 0.8rem; width: 100%; margin-top: 10px; }
 
         /* 처방전 카드 */
@@ -60,7 +61,6 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 컨트롤 섹션 */
         #controlSection { display: none; max-width: 420px; margin: 20px auto; padding: 0 15px 40px; }
     </style>
 </head>
@@ -116,44 +116,71 @@
 </div>
 
 <div id="diagModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:100; justify-content:center; align-items:center; padding:20px; box-sizing:border-box;">
-    <div style="background:#fff; padding:30px; border-radius:15px; width:100%; max-width:360px; position:relative;">
+    <div style="background:#fff; padding:30px; border-radius:15px; width:100%; max-width:360px;">
         <h3 id="surveyTitle" style="margin-top:0; font-family:'Song Myung'; border-bottom:1px solid #eee; padding-bottom:10px;">체질 진단 (1/4)</h3>
         <div id="surveyContainer">
-            <div class="survey-item" style="display:block;">
+            <div class="survey-item active" id="step1">
                 <div class="survey-question">1. 평소 체형과 골격은 어떠신가요?</div>
                 <div class="option-group">
-                    <label onclick="nextStep('태음인', 'q1')"><input type="radio" name="q1" value="태음인"> <span>골격이 크고 허리가 발달함</span></label>
-                    <label onclick="nextStep('소음인', 'q1')"><input type="radio" name="q1" value="소음인"> <span>하체가 발달하고 가냘픈 편</span></label>
-                    <label onclick="nextStep('소양인', 'q1')"><input type="radio" name="q1" value="소양인"> <span>상체가 발달하고 엉덩이가 작음</span></label>
+                    <label onclick="handleSelection('태음인', 'q1', 1)">
+                        <input type="radio" name="q1" value="태음인"> 골격이 크고 허리가 발달함
+                    </label>
+                    <label onclick="handleSelection('소음인', 'q1', 1)">
+                        <input type="radio" name="q1" value="소음인"> 하체가 발달하고 가냘픈 편
+                    </label>
+                    <label onclick="handleSelection('소양인', 'q1', 1)">
+                        <input type="radio" name="q1" value="소양인"> 상체가 발달하고 엉덩이가 작음
+                    </label>
                 </div>
-                <button class="skip-button" onclick="skipStep()">잘 모르겠어요 (건너뛰기)</button>
+                <button class="skip-button" onclick="nextStep()">잘 모르겠어요 (건너뛰기)</button>
             </div>
-            <div class="survey-item">
+
+            <div class="survey-item" id="step2">
                 <div class="survey-question">2. 성격이나 일 처리 방식은?</div>
                 <div class="option-group">
-                    <label onclick="nextStep('태음인', 'q2')"><input type="radio" name="q2" value="태음인"> <span>느긋하고 참을성이 많음</span></label>
-                    <label onclick="nextStep('소음인', 'q2')"><input type="radio" name="q2" value="소음인"> <span>세심하고 꼼꼼하며 내성적임</span></label>
-                    <label onclick="nextStep('소양인', 'q2')"><input type="radio" name="q2" value="소양인"> <span>판단이 빠르고 솔직담백함</span></label>
+                    <label onclick="handleSelection('태음인', 'q2', 2)">
+                        <input type="radio" name="q2" value="태음인"> 느긋하고 참을성이 많음
+                    </label>
+                    <label onclick="handleSelection('소음인', 'q2', 2)">
+                        <input type="radio" name="q2" value="소음인"> 세심하고 꼼꼼하며 내성적임
+                    </label>
+                    <label onclick="handleSelection('소양인', 'q2', 2)">
+                        <input type="radio" name="q2" value="소양인"> 판단이 빠르고 솔직담백함
+                    </label>
                 </div>
-                <button class="skip-button" onclick="skipStep()">건너뛰기</button>
+                <button class="skip-button" onclick="nextStep()">건너뛰기</button>
             </div>
-            <div class="survey-item">
+
+            <div class="survey-item" id="step3">
                 <div class="survey-question">3. 소화 상태와 찬 음식 반응은?</div>
                 <div class="option-group">
-                    <label onclick="nextStep('소음인', 'q3')"><input type="radio" name="q3" value="소음인"> <span>찬 것을 먹으면 배가 자주 아픔</span></label>
-                    <label onclick="nextStep('소양인', 'q3')"><input type="radio" name="q3" value="소양인"> <span>시원한 물이나 냉면을 즐김</span></label>
-                    <label onclick="nextStep('태음인', 'q3')"><input type="radio" name="q3" value="태음인"> <span>소화력이 좋아 무엇이든 잘 먹음</span></label>
+                    <label onclick="handleSelection('소음인', 'q3', 3)">
+                        <input type="radio" name="q3" value="소음인"> 찬 것을 먹으면 배가 자주 아픔
+                    </label>
+                    <label onclick="handleSelection('소양인', 'q3', 3)">
+                        <input type="radio" name="q3" value="소양인"> 시원한 물이나 냉면을 즐김
+                    </label>
+                    <label onclick="handleSelection('태음인', 'q3', 3)">
+                        <input type="radio" name="q3" value="태음인"> 소화력이 좋아 무엇이든 잘 먹음
+                    </label>
                 </div>
-                <button class="skip-button" onclick="skipStep()">건너뛰기</button>
+                <button class="skip-button" onclick="nextStep()">건너뛰기</button>
             </div>
-            <div class="survey-item">
+
+            <div class="survey-item" id="step4">
                 <div class="survey-question">4. 건강이 가장 좋을 때 느끼는 점?</div>
                 <div class="option-group">
-                    <label onclick="nextStep('태음인', 'q4')"><input type="radio" name="q4" value="태음인"> <span>땀을 시원하게 흘리고 났을 때</span></label>
-                    <label onclick="nextStep('소음인', 'q4')"><input type="radio" name="q4" value="소음인"> <span>음식 소화가 아주 편안할 때</span></label>
-                    <label onclick="nextStep('소양인', 'q4')"><input type="radio" name="q4" value="소양인"> <span>대변 활동이 매끄럽고 시원할 때</span></label>
+                    <label onclick="handleSelection('태음인', 'q4', 4)">
+                        <input type="radio" name="q4" value="태음인"> 땀을 시원하게 흘리고 났을 때
+                    </label>
+                    <label onclick="handleSelection('소음인', 'q4', 4)">
+                        <input type="radio" name="q4" value="소음인"> 음식 소화가 아주 편안할 때
+                    </label>
+                    <label onclick="handleSelection('소양인', 'q4', 4)">
+                        <input type="radio" name="q4" value="소양인"> 대변 활동이 매끄럽고 시원할 때
+                    </label>
                 </div>
-                <button class="skip-button" onclick="skipStep()">건너뛰기</button>
+                <button class="skip-button" onclick="nextStep()">결과 보기</button>
             </div>
         </div>
     </div>
@@ -166,20 +193,10 @@
     const totalSteps = 4;
     const elementMap = {'甲':'목','乙':'목','寅':'목','卯':'목','丙':'화','丁':'화','巳':'화','午':'화','戊':'토','己':'토','辰':'토','戌':'토','丑':'토','未':'토','庚':'금','辛':'금','申':'금','酉':'금','壬':'수','癸':'수','亥':'수','子':'수'};
 
-    // 데이터 확장
     const foodDB = {
-        '소음인': {
-            good: ['닭고기','인삼','대추','생강','사과','찹쌀','미꾸라지','부추','시금치','카레','감자','양배추','복숭아','멸치','토마토'],
-            bad: ['돼지고기','찬물','수박','참외','보리','메밀','밀가루','오이','맥주','빙과류']
-        },
-        '소양인': {
-            good: ['돼지고기','오리고기','오이','수박','전복','굴','보리','참외','딸기','녹차','바나나','파인애플','해삼','메밀'],
-            bad: ['닭고기','인삼','생강','고추','꿀','사과','귤','오렌지','카레','후추']
-        },
-        '태음인': {
-            good: ['소고기','우유','무','연근','고구마','배','콩','들깨','율무','도라지','더덕','마','밤','호두','미역'],
-            bad: ['닭고기','조개류','새우','메밀','배추','커피','술','설탕']
-        }
+        '소음인': { good: ['닭고기','인삼','대추','생강','사과','찹쌀','미꾸라지','부추','시금치','카레','감자','양배추','복숭아','멸치','토마토'], bad: ['돼지고기','찬물','수박','참외','보리','메밀','밀가루','오이','맥주','빙과류'] },
+        '소양인': { good: ['돼지고기','오리고기','오이','수박','전복','굴','보리','참외','딸기','녹차','바나나','파인애플','해삼','메밀'], bad: ['닭고기','인삼','생강','고추','꿀','사과','귤','오렌지','카레','후추'] },
+        '태음인': { good: ['소고기','우유','무','연근','고구마','배','콩','들깨','율무','도라지','더덕','마','밤','호두','미역'], bad: ['닭고기','조개류','새우','메밀','배추','커피','술','설탕'] }
     };
 
     const lifestyleDB = {
@@ -203,78 +220,49 @@
         '동지': { food: '팥죽, 단호박', msg: '가장 밤이 긴 날, 붉은 음식으로 양기를 깨우세요.' }
     };
 
-    // 설문 제어
-        // 설문 제어 (수정된 버전)
-    function showModal() { 
-        document.getElementById('diagModal').style.display='flex'; 
-        currentStep = 1; 
-        // 기존 체크된 라디오 버튼 초기화
-        document.querySelectorAll('input[type="radio"]').forEach(rb => rb.checked = false);
-        updateStep(); 
-    }
-    
-    function nextStep(val, name) {
-        // 1. 현재 단계의 라디오 버튼을 강제로 체크
-        const radio = document.querySelector(`input[name="${name}"][value="${val}"]`);
-        if (radio) radio.checked = true;
-
-        // 2. 마지막 단계인지 확인 후 이동
-        if(currentStep < totalSteps) { 
-            currentStep++; 
-            updateStep(); 
-        } else { 
-            startAnalysis(); 
-        }
+    // 모달 및 단계 제어 (강력한 수정)
+    function showModal() {
+        document.getElementById('diagModal').style.display = 'flex';
+        currentStep = 1;
+        updateStepUI();
     }
 
-    function skipStep() {
-        if(currentStep < totalSteps) { 
-            currentStep++; 
-            updateStep(); 
-        } else { 
-            startAnalysis(); 
-        }
-    }
-
-    function updateStep() {
-        // 제목 업데이트
-        document.getElementById('surveyTitle').innerText = `체질 진단 (${currentStep}/${totalSteps})`;
+    function handleSelection(val, name, step) {
+        // 해당 라디오 버튼 체크
+        const targetRadio = document.querySelector(`input[name="${name}"][value="${val}"]`);
+        if(targetRadio) targetRadio.checked = true;
         
-        // 모든 항목 숨기고 현재 단계만 보이기
-        const items = document.querySelectorAll('.survey-item');
-        items.forEach((item, idx) => {
-            if (idx + 1 === currentStep) {
-                item.style.display = 'block';
-            } else {
-                item.style.display = 'none';
-            }
-        });
+        // 스타일 업데이트
+        const labels = document.querySelectorAll(`#step${step} label`);
+        labels.forEach(l => l.classList.remove('checked'));
+        event.currentTarget.classList.add('checked');
+
+        // 약간의 지연 후 다음 단계로
+        setTimeout(nextStep, 250);
     }
 
-    
-    function nextStep(val, name) {
-        document.querySelector(`input[name="${name}"][value="${val}"]`).checked = true;
-        if(currentStep < totalSteps) { currentStep++; setTimeout(updateStep, 200); }
-        else { startAnalysis(); }
+    function nextStep() {
+        if (currentStep < totalSteps) {
+            currentStep++;
+            updateStepUI();
+        } else {
+            startAnalysis();
+        }
     }
 
-    function skipStep() {
-        if(currentStep < totalSteps) { currentStep++; updateStep(); }
-        else { startAnalysis(); }
-    }
-
-    function updateStep() {
+    function updateStepUI() {
         document.getElementById('surveyTitle').innerText = `체질 진단 (${currentStep}/${totalSteps})`;
         document.querySelectorAll('.survey-item').forEach((item, idx) => {
-            item.style.display = (idx + 1 === currentStep) ? 'block' : 'none';
+            item.classList.remove('active');
+            if (idx + 1 === currentStep) item.classList.add('active');
         });
     }
 
+    // 분석 로직
     function startAnalysis() {
         document.getElementById('diagModal').style.display = 'none';
         const name = document.getElementById('userName').value || '익명';
         
-        // 체질 계산
         let s = {'태음인':0,'소음인':0,'소양인':0};
         for(let i=1; i<=4; i++) {
             const el = document.querySelector(`input[name="q${i}"]:checked`);
@@ -282,7 +270,6 @@
         }
         currentBody = Object.keys(s).reduce((a, b) => s[a] >= s[b] ? a : b);
 
-        // 정밀 시차 보정 (동경 135도 기준)
         const cityLng = parseFloat(document.getElementById('birthCity').value);
         const birthHour = parseInt(document.getElementById('birthTime').value);
         const longDiffMin = (135.0 - cityLng) * 4; 
@@ -295,7 +282,6 @@
         const nowSolar = Solar.fromDate(new Date());
         const tLunar = nowSolar.getLunar();
 
-        // 오행 분석 (월지 가중치 강화)
         let counts = {'목':0,'화':0,'토':0,'금':0,'수':0};
         const pillars = [
             {v:eightChar.getYearGan(),w:1}, {v:eightChar.getYearZhi(),w:1},
@@ -306,7 +292,7 @@
         pillars.forEach(p => { if(elementMap[p.v]) counts[elementMap[p.v]] += p.w; });
         const lack = Object.entries(counts).sort((a,b)=>a[1]-b[1])[0][0];
 
-        // UI 반영
+        // UI 데이터 바인딩
         document.getElementById('resName').innerText = `${name} 님`;
         document.getElementById('resToday').innerText = `${nowSolar.toYmd()} (${tLunar.getDayInGanZhi()}일)`;
         document.getElementById('resBody').innerText = `[ 정밀 체질 분석: ${currentBody} ]`;
@@ -314,7 +300,6 @@
         document.getElementById('resTitle').style.color = hansiDB[lack].color;
         document.getElementById('resDesc').innerText = hansiDB[lack].desc;
         
-        // 계절/절기 처방
         const month = new Date().getMonth() + 1;
         const term = nowSolar.getTerm();
         let seasonMsg = (month >= 3 && month <= 5) ? '봄' : (month >= 6 && month <= 8) ? '여름' : (month >= 9 && month <= 11) ? '가을' : '겨울';
@@ -322,13 +307,9 @@
         
         document.getElementById('seasonalPrescription').innerHTML = `지금은 <strong>${seasonMsg}</strong>의 기운이 흐릅니다. <strong>${currentBody}</strong> 님께 추천하는 맞춤 식품: <br><span style="color:#A24841; font-weight:bold;">${foodDB[currentBody].good.slice(0,4).join(', ')}</span>` + termHTML;
 
-        // 오늘의 운세
-        const userGan = eightChar.getDayGan();
-        const todayGan = tLunar.getDayGan();
-        const fortune = getDailyFortune(userGan, todayGan);
+        const fortune = getDailyFortune(eightChar.getDayGan(), tLunar.getDayGan());
         document.getElementById('fortuneBox').innerHTML = `<div style="margin-top:15px; padding:12px; border:1px dashed #c9c4b9; background:#fffaf0; font-size:0.85rem;"><strong>今日運勢:</strong> "${fortune}"</div>`;
 
-        // 생활 양생
         const life = lifestyleDB[currentBody];
         document.getElementById('lifestyleBox').innerHTML = `<div class="advice-box" style="border-left:4px solid var(--wood);"><strong>🏃 생활 양생법:</strong><br>• 운동: ${life.exercise}<br>• 습관: ${life.habit}</div>`;
         
