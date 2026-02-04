@@ -33,9 +33,20 @@
         <input type="text" id="userNameInput" placeholder="이름 (또는 호)를 입력하세요">
         <input type="date" id="birthDate" value="1995-01-01">
         <select id="birthTime">
-            <option value="1">子시 (00:30~)</option><option value="11">巳시 (09:30~)</option>
-            <option value="13">午시 (11:30~)</option><option value="23">亥시 (21:30~)</option>
-        </select>
+    <option value="0">子시 (23:30 ~ 01:29)</option>
+    <option value="2">丑시 (01:30 ~ 03:29)</option>
+    <option value="4">寅시 (03:30 ~ 05:29)</option>
+    <option value="6">卯시 (05:30 ~ 07:29)</option>
+    <option value="8">辰시 (07:30 ~ 09:29)</option>
+    <option value="10">巳시 (09:30 ~ 11:29)</option>
+    <option value="12">午시 (11:30 ~ 13:29)</option>
+    <option value="14">未시 (13:30 ~ 15:29)</option>
+    <option value="16">申시 (15:30 ~ 17:29)</option>
+    <option value="18">酉시 (17:30 ~ 19:29)</option>
+    <option value="20">戌시 (19:30 ~ 21:29)</option>
+    <option value="22">亥시 (21:30 ~ 23:29)</option>
+</select>
+
         <button onclick="analyze()">나의 기운 분석</button>
 
         <div id="resultArea">
