@@ -15,7 +15,7 @@
             --wood: #4A6741; --fire: #A24841; --earth: #C29A5B; --metal: #7D7D7D; --water: #3E5266; 
         }
 
-        body { font-family: 'Noto Serif KR', serif; background-color: #dcd9d0; margin: 0; padding: 15px; color: var(--ink); line-height: 1.6; }
+        body { font-family: 'Noto Serif KR', serif; background-color: #dcd9d0; margin: 0; padding: 15px; color: var(--ink); line-height: 1.6; -webkit-tap-highlight-color: transparent; }
         .app-container { max-width: 420px; margin: auto; background: var(--paper); border: 1px solid #c9c4b9; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 12px; overflow: hidden; }
         
         .header { padding: 45px 20px; text-align: center; border-bottom: 1px double #d1cdbf; background: #f9f7f0; }
@@ -35,60 +35,42 @@
             font-weight: 700; cursor: pointer; letter-spacing: 2px; border-radius: 4px; transition: 0.3s;
         }
 
-        /* 설문지 네모 버튼 */
-        .survey-item { margin-bottom: 25px; border-bottom: 1px dashed #eee; padding-bottom: 15px; }
-        .survey-question { font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; color: #333; text-align: left; }
-        .option-group { display: flex; gap: 8px; flex-direction: column; }
+        /* 설문지 스타일 */
+        .survey-item { display: none; animation: fadeIn 0.4s; }
+        .survey-question { font-size: 1rem; font-weight: 700; margin-bottom: 20px; color: #333; line-height: 1.4; }
         .option-group label {
-            display: block; padding: 12px; border: 1px solid #d1cdbf; background: #fff; 
-            font-size: 0.85rem; cursor: pointer; border-radius: 4px; text-align: left;
+            display: block; padding: 18px; border: 1px solid #d1cdbf; background: #fff; 
+            font-size: 0.9rem; cursor: pointer; border-radius: 8px; margin-bottom: 12px; transition: 0.2s;
         }
         .option-group input[type="radio"] { display: none; }
+        .option-group label:active { transform: scale(0.98); background: #f9f7f0; }
         .option-group label:has(input:checked) { background: var(--ink); color: #fff; border-color: var(--ink); }
+        .skip-button { background: none; color: #999; text-decoration: underline; border: none; padding: 10px; font-size: 0.8rem; width: 100%; margin-top: 10px; }
 
-        /* 처방전 카드 및 낙관 */
+        /* 처방전 카드 */
         #prescriptionCard { 
             display: none; background: var(--paper); padding: 35px 25px; 
             border: 12px double #d1cdbf; margin: 10px; text-align: center; position: relative; 
         }
-        .seal {
-            position: absolute; bottom: 30px; right: 25px; width: 45px; height: 45px; 
-            border: 2px solid #a24841; color: #a24841; font-family: 'Song Myung'; font-weight: bold;
-            display: flex; align-items: center; justify-content: center; line-height: 1.2;
-            transform: rotate(-10deg); opacity: 0.7; font-size: 1.1rem; pointer-events: none;
-        }
+        .seal { position: absolute; bottom: 30px; right: 25px; width: 45px; height: 45px; border: 2px solid #a24841; color: #a24841; font-family: 'Song Myung'; font-weight: bold; display: flex; align-items: center; justify-content: center; line-height: 1.2; transform: rotate(-10deg); opacity: 0.7; font-size: 1.1rem; }
         .tag-box { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 15px 0; }
         .food-tag { padding: 5px 12px; border: 1px solid #d1cdbf; font-size: 0.8rem; border-radius: 4px; background: #fff; }
         .advice-box { font-size: 0.85rem; background: #f9f7f0; padding: 15px; border-radius: 8px; margin: 15px 0; border: 1px solid #eee; text-align: left; }
-        .warning-box { font-size: 0.8rem; color: #a24841; background: #fdf2f2; padding: 12px; border-radius: 8px; text-align: left; border-left: 4px solid #a24841; }
-        .lucky-color-box { display: inline-block; padding: 2px 8px; border-radius: 4px; color: #fff; font-size: 0.75rem; vertical-align: middle; }
+        .warning-box { font-size: 0.8rem; color: #a24841; background: #fdf2f2; padding: 12px; border-radius: 8px; text-align: left; border-left: 4px solid #a24841; margin-top: 10px; }
 
-        /* 자동완성 스타일 */
-        .search-container { position: relative; flex: 1; }
-        #autocomplete-list {
-            position: absolute; border: 1px solid #d4d4d4; border-bottom: none; border-top: none; z-index: 99;
-            top: 100%; left: 0; right: 0; background-color: #fff; max-height: 150px; overflow-y: auto;
-        }
-        .autocomplete-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #d4d4d4; font-size: 0.85rem; text-align: left; }
-        .autocomplete-item:hover { background-color: #e9e9e9; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* 컨트롤 섹션 */
         #controlSection { display: none; max-width: 420px; margin: 20px auto; padding: 0 15px 40px; }
-        .search-box { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .action-buttons { display: flex; gap: 10px; }
-        .btn-secondary { background: #7d7d7d; }
-
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; justify-content: center; align-items: center; }
-        .modal-content { background: #fff; padding: 25px; width: 85%; max-width: 360px; border-radius: 12px; max-height: 85vh; overflow-y: auto; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
     <div id="inputForm">
-        <div class="header"><h1>食 結</h1><p>정밀 시차 및 계절 통합 분석 시스템</p></div>
+        <div class="header"><h1>食 結</h1><p>정밀 시차 및 계절 통합 분석</p></div>
         <div class="content">
-            <input type="text" id="userName" placeholder="성함 또는 호(號)를 입력하세요">
+            <input type="text" id="userName" placeholder="성함(號) 입력">
             <div class="section-title">출생 정보</div>
             <input type="date" id="birthDate" value="1995-01-01">
             <select id="birthTime">
@@ -99,14 +81,14 @@
                 <option value="16">申시 (15:30~17:29)</option><option value="18">酉시 (17:30~19:29)</option>
                 <option value="20">戌시 (19:30~21:29)</option><option value="22">亥시 (21:30~23:29)</option>
             </select>
-            <div class="section-title">출생지 (시차 보정)</div>
+            <div class="section-title">출생지 (경도)</div>
             <select id="birthCity">
-                <option value="127.0" selected>서울, 경기, 전주 (기준 0분)</option>
-                <option value="126.5">제주, 목포 (-4분)</option>
-                <option value="128.6">부산, 창원 (+6분)</option>
-                <option value="129.0">울산, 포항 (+8분)</option>
+                <option value="127.0" selected>서울, 경기, 전주</option>
+                <option value="126.5">제주, 목포</option>
+                <option value="128.6">부산, 대구, 창원</option>
+                <option value="129.0">울산, 포항</option>
             </select>
-            <button onclick="showModal()">체질 진단 시작</button>
+            <button onclick="showModal()">체질 진단 및 분석 시작</button>
         </div>
     </div>
 
@@ -115,158 +97,211 @@
             <span id="resName"></span><span id="resToday"></span>
         </div>
         <div id="resBody" style="font-size: 0.8rem; font-weight: 700; color: #888;"></div>
-        <div id="luckyColor" style="margin: 10px 0;"></div>
         <h2 id="resTitle" style="font-family: 'Song Myung', serif; font-size: 2rem; margin: 5px 0;"></h2>
-        <div style="height: 180px; margin: 15px 0;"><canvas id="energyChart"></canvas></div>
-        <div id="resDesc" style="font-size: 0.85rem; color: #444; word-break: keep-all;"></div>
-        <div id="dailyAdvice" class="advice-box"></div>
+        <div style="height: 160px; margin: 15px 0;"><canvas id="energyChart"></canvas></div>
+        <div id="resDesc" style="font-size: 0.85rem; color: #444; word-break: keep-all; margin-bottom: 15px;"></div>
+        
+        <div id="seasonalPrescription" class="advice-box"></div>
+        <div id="fortuneBox"></div>
         <div class="tag-box" id="resFoods"></div>
+        <div id="lifestyleBox"></div>
         <div id="resWarning" class="warning-box"></div>
         <div class="seal">食<br>結</div>
     </div>
 </div>
 
 <div id="controlSection">
-    <div class="search-box">
-        <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: 10px;">🔍 음식 궁합 확인 (자동완성)</div>
-        <div style="display: flex; gap: 5px;">
-            <div class="search-container">
-                <input type="text" id="foodQuery" placeholder="음식명을 입력하세요" style="margin-bottom:0; border: 1px solid #ddd; padding: 10px;">
-                <div id="autocomplete-list"></div>
-            </div>
-            <button onclick="checkFoodMatch()" style="width: auto; padding: 0 15px; font-size: 0.8rem;">검색</button>
-        </div>
-        <div id="foodMatchResult" style="font-size: 0.85rem; margin-top: 15px; font-weight: bold; line-height: 1.5;"></div>
-    </div>
-    <div class="action-buttons">
-        <button class="btn-secondary" onclick="location.reload()">🔄 다시 하기</button>
-        <button onclick="saveAsImage()">📸 처방전 저장</button>
-    </div>
+    <button onclick="location.reload()" style="background:#7d7d7d; margin-bottom:10px;">🔄 다시 하기</button>
+    <button onclick="saveAsImage()">📸 처방전 이미지 저장</button>
 </div>
 
-<div id="diagModal" class="modal">
-    <div class="modal-content">
-        <h3 style="margin-top:0; font-family: 'Song Myung';">정밀 체질 진단</h3>
+<div id="diagModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:100; justify-content:center; align-items:center; padding:20px; box-sizing:border-box;">
+    <div style="background:#fff; padding:30px; border-radius:15px; width:100%; max-width:360px; position:relative;">
+        <h3 id="surveyTitle" style="margin-top:0; font-family:'Song Myung'; border-bottom:1px solid #eee; padding-bottom:10px;">체질 진단 (1/4)</h3>
         <div id="surveyContainer">
-            <div class="survey-item">
-                <div class="survey-question">1. 평소 체형과 골격은?</div>
+            <div class="survey-item" style="display:block;">
+                <div class="survey-question">1. 평소 체형과 골격은 어떠신가요?</div>
                 <div class="option-group">
-                    <label><input type="radio" name="q1" value="태음인" checked> <span>골격이 크고 허리 부위가 발달함</span></label>
-                    <label><input type="radio" name="q1" value="소음인"> <span>하체가 발달하고 전체적으로 가냘픈 편</span></label>
-                    <label><input type="radio" name="q1" value="소양인"> <span>상체가 발달하고 엉덩이가 작고 가벼움</span></label>
+                    <label onclick="nextStep('태음인', 'q1')"><input type="radio" name="q1" value="태음인"> <span>골격이 크고 허리가 발달함</span></label>
+                    <label onclick="nextStep('소음인', 'q1')"><input type="radio" name="q1" value="소음인"> <span>하체가 발달하고 가냘픈 편</span></label>
+                    <label onclick="nextStep('소양인', 'q1')"><input type="radio" name="q1" value="소양인"> <span>상체가 발달하고 엉덩이가 작음</span></label>
                 </div>
+                <button class="skip-button" onclick="skipStep()">잘 모르겠어요 (건너뛰기)</button>
             </div>
             <div class="survey-item">
                 <div class="survey-question">2. 성격이나 일 처리 방식은?</div>
                 <div class="option-group">
-                    <label><input type="radio" name="q2" value="태음인"> <span>느긋하고 참을성이 많으며 보수적임</span></label>
-                    <label><input type="radio" name="q2" value="소음인"> <span>세심하고 꼼꼼하며 내성적인 편임</span></label>
-                    <label><input type="radio" name="q2" value="소양인"> <span>판단이 빠르고 솔직하며 행동이 앞섬</span></label>
+                    <label onclick="nextStep('태음인', 'q2')"><input type="radio" name="q2" value="태음인"> <span>느긋하고 참을성이 많음</span></label>
+                    <label onclick="nextStep('소음인', 'q2')"><input type="radio" name="q2" value="소음인"> <span>세심하고 꼼꼼하며 내성적임</span></label>
+                    <label onclick="nextStep('소양인', 'q2')"><input type="radio" name="q2" value="소양인"> <span>판단이 빠르고 솔직담백함</span></label>
                 </div>
+                <button class="skip-button" onclick="skipStep()">건너뛰기</button>
             </div>
             <div class="survey-item">
                 <div class="survey-question">3. 소화 상태와 찬 음식 반응은?</div>
                 <div class="option-group">
-                    <label><input type="radio" name="q3" value="소음인"> <span>찬 것을 먹으면 설사하거나 배가 아픔</span></label>
-                    <label><input type="radio" name="q3" value="소양인"> <span>시원한 물이나 냉면 등 찬 음식을 즐김</span></label>
-                    <label><input type="radio" name="q3" value="태음인"> <span>소화력이 좋아 무엇이든 잘 먹는 편임</span></label>
+                    <label onclick="nextStep('소음인', 'q3')"><input type="radio" name="q3" value="소음인"> <span>찬 것을 먹으면 배가 자주 아픔</span></label>
+                    <label onclick="nextStep('소양인', 'q3')"><input type="radio" name="q3" value="소양인"> <span>시원한 물이나 냉면을 즐김</span></label>
+                    <label onclick="nextStep('태음인', 'q3')"><input type="radio" name="q3" value="태음인"> <span>소화력이 좋아 무엇이든 잘 먹음</span></label>
                 </div>
+                <button class="skip-button" onclick="skipStep()">건너뛰기</button>
             </div>
             <div class="survey-item">
-                <div class="survey-question">4. 건강이 가장 좋을 때는?</div>
+                <div class="survey-question">4. 건강이 가장 좋을 때 느끼는 점?</div>
                 <div class="option-group">
-                    <label><input type="radio" name="q4" value="태음인"> <span>땀을 시원하게 흘리고 났을 때</span></label>
-                    <label><input type="radio" name="q4" value="소음인"> <span>음식 소화가 아주 편안하게 될 때</span></label>
-                    <label><input type="radio" name="q4" value="소양인"> <span>대변 활동이 시원하게 잘 소통될 때</span></label>
+                    <label onclick="nextStep('태음인', 'q4')"><input type="radio" name="q4" value="태음인"> <span>땀을 시원하게 흘리고 났을 때</span></label>
+                    <label onclick="nextStep('소음인', 'q4')"><input type="radio" name="q4" value="소음인"> <span>음식 소화가 아주 편안할 때</span></label>
+                    <label onclick="nextStep('소양인', 'q4')"><input type="radio" name="q4" value="소양인"> <span>대변 활동이 매끄럽고 시원할 때</span></label>
                 </div>
+                <button class="skip-button" onclick="skipStep()">건너뛰기</button>
             </div>
         </div>
-        <button onclick="startAnalysis()">결과 보기</button>
     </div>
 </div>
 
 <script>
     let chart = null;
     let currentBody = "";
+    let currentStep = 1;
+    const totalSteps = 4;
     const elementMap = {'甲':'목','乙':'목','寅':'목','卯':'목','丙':'화','丁':'화','巳':'화','午':'화','戊':'토','己':'토','辰':'토','戌':'토','丑':'토','未':'토','庚':'금','辛':'금','申':'금','酉':'금','壬':'수','癸':'수','亥':'수','子':'수'};
-    const luckyColors = {'목':{n:'청록색',c:'#4A6741'},'화':{n:'진홍색',c:'#A24841'},'토':{n:'황금색',c:'#C29A5B'},'금':{n:'백은색',c:'#999999'},'수':{n:'심해색',c:'#3E5266'}};
-    
+
+    // 데이터 확장
     const foodDB = {
         '소음인': {
-            good: ['닭고기','인삼','대추','생강','사과','찹쌀','미꾸라지','부추','시금치','카레'],
-            bad: ['돼지고기','찬물','수박','참외','보리','메밀','밀가루','오이','맥주']
+            good: ['닭고기','인삼','대추','생강','사과','찹쌀','미꾸라지','부추','시금치','카레','감자','양배추','복숭아','멸치','토마토'],
+            bad: ['돼지고기','찬물','수박','참외','보리','메밀','밀가루','오이','맥주','빙과류']
         },
         '소양인': {
-            good: ['돼지고기','오리고기','오이','수박','전복','굴','보리','참외','딸기','녹차'],
-            bad: ['닭고기','인삼','생강','고추','꿀','사과','귤','오렌지','카레']
+            good: ['돼지고기','오리고기','오이','수박','전복','굴','보리','참외','딸기','녹차','바나나','파인애플','해삼','메밀'],
+            bad: ['닭고기','인삼','생강','고추','꿀','사과','귤','오렌지','카레','후추']
         },
         '태음인': {
-            good: ['소고기','우유','무','연근','고구마','배','콩','들깨','율무','도라지'],
-            bad: ['닭고기','조개류','새우','메밀','배추','커피','술']
+            good: ['소고기','우유','무','연근','고구마','배','콩','들깨','율무','도라지','더덕','마','밤','호두','미역'],
+            bad: ['닭고기','조개류','새우','메밀','배추','커피','술','설탕']
         }
     };
 
-    const allFoods = Array.from(new Set([...foodDB.소음인.good, ...foodDB.소음인.bad, ...foodDB.소양인.good, ...foodDB.소양인.bad, ...foodDB.태음인.good, ...foodDB.태음인.bad]));
-
-    const hansiDB = {
-        '목': { name: '木 (청량한 생기)', color: '#4A6741', desc: '간(肝)의 해독 기운을 돕는 신맛과 청색 식재료가 필요합니다.', foods: ['냉이', '부추', '미나리', '매실'] },
-        '화': { name: '火 (따뜻한 에너지)', color: '#A24841', desc: '심장 순환을 활발히 하는 쓴맛과 적색 식재료가 필요합니다.', foods: ['육개장', '취나물', '자몽', '수수'] },
-        '토': { name: '土 (안정의 중심)', color: '#C29A5B', desc: '비위(脾胃)를 다스리는 단맛과 황색 식재료가 필요합니다.', foods: ['단호박', '고구마', '감자', '꿀'] },
-        '금': { name: '金 (단단한 결실)', color: '#7D7D7D', desc: '폐(肺) 기능을 보호하는 매운맛과 백색 식재료가 필요합니다.', foods: ['닭고기', '무국', '마늘', '배'] },
-        '수': { name: '水 (깊은 휴식)', color: '#3E5266', desc: '신장(腎臟)의 원기를 보충하는 짠맛과 흑색 식재료가 필요합니다.', foods: ['미역', '검은콩', '김', '블루베리'] }
+    const lifestyleDB = {
+        '태음인': { exercise: '땀이 흠뻑 나는 조깅, 등산', habit: '식후 가벼운 산책 필수', advice: '순환이 정체되기 쉬우니 계속 움직이세요.' },
+        '소음인': { exercise: '요가, 스트레칭 등 가벼운 운동', habit: '배와 발을 항상 따뜻하게 유지', advice: '땀을 너무 많이 내면 기운이 빠집니다.' },
+        '소양인': { exercise: '스쿼트 등 하체 강화 운동', habit: '명상으로 화(火) 가라앉히기', advice: '하체를 단단하게 만드는 것이 최고의 보약입니다.' }
     };
 
-    function showModal() { document.getElementById('diagModal').style.display='flex'; }
+    const hansiDB = {
+        '목': { name: '木 (청량한 생기)', color: '#4A6741', desc: '간(肝)의 해독 기운을 돕는 푸른 기운의 식재료가 필요합니다.', foods: ['냉이', '부추', '미나리', '매실'] },
+        '화': { name: '火 (따뜻한 에너지)', color: '#A24841', desc: '심장 순환을 활발히 하는 붉은 기운의 식재료가 필요합니다.', foods: ['육개장', '취나물', '자몽', '수수'] },
+        '토': { name: '土 (안정의 중심)', color: '#C29A5B', desc: '비위(脾胃)를 다스리는 노란 기운의 식재료가 필요합니다.', foods: ['단호박', '고구마', '감자', '꿀'] },
+        '금': { name: '金 (단단한 결실)', color: '#7D7D7D', desc: '폐(肺) 기능을 보호하는 하얀 기운의 식재료가 필요합니다.', foods: ['닭고기', '무국', '마늘', '배'] },
+        '수': { name: '水 (깊은 휴식)', color: '#3E5266', desc: '신장(腎臟)의 원기를 보충하는 검은 기운의 식재료가 필요합니다.', foods: ['미역', '검은콩', '김', '블루베리'] }
+    };
+
+    const solarTermSpecial = {
+        '입춘': { food: '달래, 냉이', msg: '봄의 시작입니다. 햇나물로 겨울내 쌓인 독소를 배출하세요.' },
+        '하지': { food: '감자, 보리', msg: '양기가 강한 시기, 시원한 성질의 음식으로 열을 식히세요.' },
+        '추분': { food: '버섯, 가지', msg: '음기가 살아납니다. 기관지를 보호하고 수분을 보충하세요.' },
+        '동지': { food: '팥죽, 단호박', msg: '가장 밤이 긴 날, 붉은 음식으로 양기를 깨우세요.' }
+    };
+
+    // 설문 제어
+    function showModal() { document.getElementById('diagModal').style.display='flex'; currentStep=1; updateStep(); }
+    
+    function nextStep(val, name) {
+        document.querySelector(`input[name="${name}"][value="${val}"]`).checked = true;
+        if(currentStep < totalSteps) { currentStep++; setTimeout(updateStep, 200); }
+        else { startAnalysis(); }
+    }
+
+    function skipStep() {
+        if(currentStep < totalSteps) { currentStep++; updateStep(); }
+        else { startAnalysis(); }
+    }
+
+    function updateStep() {
+        document.getElementById('surveyTitle').innerText = `체질 진단 (${currentStep}/${totalSteps})`;
+        document.querySelectorAll('.survey-item').forEach((item, idx) => {
+            item.style.display = (idx + 1 === currentStep) ? 'block' : 'none';
+        });
+    }
 
     function startAnalysis() {
+        document.getElementById('diagModal').style.display = 'none';
         const name = document.getElementById('userName').value || '익명';
+        
+        // 체질 계산
         let s = {'태음인':0,'소음인':0,'소양인':0};
-        [1,2,3,4].forEach(i => { 
-            const val = document.querySelector(`input[name="q${i}"]:checked`).value;
-            s[val]++; 
-        });
+        for(let i=1; i<=4; i++) {
+            const el = document.querySelector(`input[name="q${i}"]:checked`);
+            if(el) s[el.value]++;
+        }
         currentBody = Object.keys(s).reduce((a, b) => s[a] >= s[b] ? a : b);
 
-        const b = document.getElementById('birthDate').value;
+        // 정밀 시차 보정 (동경 135도 기준)
         const cityLng = parseFloat(document.getElementById('birthCity').value);
-        const time = parseInt(document.getElementById('birthTime').value);
-        const offsetMin = Math.round((cityLng - 127.0) * 4);
-        const bDate = new Date(new Date(b).getTime() + (time * 60 + offsetMin) * 60000);
-        
-        const solar = Solar.fromDate(bDate);
+        const birthHour = parseInt(document.getElementById('birthTime').value);
+        const longDiffMin = (135.0 - cityLng) * 4; 
+        const baseDate = new Date(document.getElementById('birthDate').value);
+        const correctedDate = new Date(baseDate.getTime() + (birthHour * 60 - longDiffMin) * 60000);
+
+        const solar = Solar.fromDate(correctedDate);
         const lunar = solar.getLunar();
         const eightChar = lunar.getEightChar();
-        const tLunar = Solar.fromDate(new Date()).getLunar();
-        
-        let counts = {'목':0,'화':0,'토':0,'금':0,'수':0};
-        const chars = [
-            {v:eightChar.getYearGan(),w:1},{v:eightChar.getYearZhi(),w:1},
-            {v:eightChar.getMonthGan(),w:1.2},{v:eightChar.getMonthZhi(),w:2.0},
-            {v:eightChar.getDayGan(),w:1.5},{v:eightChar.getDayZhi(),w:1},
-            {v:eightChar.getTimeGan(),w:1},{v:eightChar.getTimeZhi(),w:1}
-        ];
-        chars.forEach(i => { if(elementMap[i.v]) counts[elementMap[i.v]] += i.w; });
+        const nowSolar = Solar.fromDate(new Date());
+        const tLunar = nowSolar.getLunar();
 
+        // 오행 분석 (월지 가중치 강화)
+        let counts = {'목':0,'화':0,'토':0,'금':0,'수':0};
+        const pillars = [
+            {v:eightChar.getYearGan(),w:1}, {v:eightChar.getYearZhi(),w:1},
+            {v:eightChar.getMonthGan(),w:1.2}, {v:eightChar.getMonthZhi(),w:2.2},
+            {v:eightChar.getDayGan(),w:1.5}, {v:eightChar.getDayZhi(),w:1},
+            {v:eightChar.getTimeGan(),w:1}, {v:eightChar.getTimeZhi(),w:1}
+        ];
+        pillars.forEach(p => { if(elementMap[p.v]) counts[elementMap[p.v]] += p.w; });
         const lack = Object.entries(counts).sort((a,b)=>a[1]-b[1])[0][0];
-        
+
+        // UI 반영
         document.getElementById('resName').innerText = `${name} 님`;
-        document.getElementById('resToday').innerText = `${tLunar.toYmd()} (${tLunar.getDayInGanZhi()}일)`;
+        document.getElementById('resToday').innerText = `${nowSolar.toYmd()} (${tLunar.getDayInGanZhi()}일)`;
         document.getElementById('resBody').innerText = `[ 정밀 체질 분석: ${currentBody} ]`;
-        document.getElementById('luckyColor').innerHTML = `행운색: <span class="lucky-color-box" style="background:${luckyColors[lack].c}">${luckyColors[lack].n}</span>`;
         document.getElementById('resTitle').innerText = hansiDB[lack].name;
         document.getElementById('resTitle').style.color = hansiDB[lack].color;
         document.getElementById('resDesc').innerText = hansiDB[lack].desc;
-        document.getElementById('resFoods').innerHTML = hansiDB[lack].foods.map(f => `<span class="food-tag">#${f}</span>`).join('');
         
-        document.getElementById('dailyAdvice').innerHTML = `오늘의 기운은 <strong>${elementMap[tLunar.getDayGan()]}</strong>입니다. 처방 식단을 통해 균형을 맞추세요.`;
-        const warns = {'태음인':'습(濕)을 주의하고 과식을 피하세요.','소음인':'냉증을 피하고 항상 따뜻하게 드세요.','소양인':'화(火)가 오르기 쉬우니 담백하게 드세요.'};
-        document.getElementById('resWarning').innerText = `⚠️ 주의: ${warns[currentBody]}`;
+        // 계절/절기 처방
+        const month = new Date().getMonth() + 1;
+        const term = nowSolar.getTerm();
+        let seasonMsg = (month >= 3 && month <= 5) ? '봄' : (month >= 6 && month <= 8) ? '여름' : (month >= 9 && month <= 11) ? '가을' : '겨울';
+        let termHTML = solarTermSpecial[term] ? `<div class="warning-box" style="background:#f0f7ff; border-left-color:#3e5266;"><strong>✨ 절기 특보 [${term}]:</strong> ${solarTermSpecial[term].msg} <br>추천: ${solarTermSpecial[term].food}</div>` : "";
+        
+        document.getElementById('seasonalPrescription').innerHTML = `지금은 <strong>${seasonMsg}</strong>의 기운이 흐릅니다. <strong>${currentBody}</strong> 님께 추천하는 맞춤 식품: <br><span style="color:#A24841; font-weight:bold;">${foodDB[currentBody].good.slice(0,4).join(', ')}</span>` + termHTML;
+
+        // 오늘의 운세
+        const userGan = eightChar.getDayGan();
+        const todayGan = tLunar.getDayGan();
+        const fortune = getDailyFortune(userGan, todayGan);
+        document.getElementById('fortuneBox').innerHTML = `<div style="margin-top:15px; padding:12px; border:1px dashed #c9c4b9; background:#fffaf0; font-size:0.85rem;"><strong>今日運勢:</strong> "${fortune}"</div>`;
+
+        // 생활 양생
+        const life = lifestyleDB[currentBody];
+        document.getElementById('lifestyleBox').innerHTML = `<div class="advice-box" style="border-left:4px solid var(--wood);"><strong>🏃 생활 양생법:</strong><br>• 운동: ${life.exercise}<br>• 습관: ${life.habit}</div>`;
+        
+        document.getElementById('resFoods').innerHTML = hansiDB[lack].foods.map(f => `<span class="food-tag">#${f}</span>`).join('');
+        document.getElementById('resWarning').innerText = `⚠️ 주의: ${currentBody === '소음인' ? '냉증을 피하고 항상 따뜻하게 드세요.' : currentBody === '소양인' ? '화(火)가 오르기 쉬우니 담백하게 드세요.' : '습(濕)을 주의하고 과식을 피하세요.'}`;
 
         renderChart(counts, hansiDB[lack].color);
-        document.getElementById('diagModal').style.display = 'none';
         document.getElementById('inputForm').style.display = 'none';
         document.getElementById('prescriptionCard').style.display = 'block';
         document.getElementById('controlSection').style.display = 'block';
+    }
+
+    function getDailyFortune(u, t) {
+        const uE = elementMap[u]; const tE = elementMap[t];
+        if(uE === tE) return "동료를 얻거나 자신감이 넘치는 날입니다. 주관을 가지고 밀고 나가세요.";
+        const rel = {'목':{'화':'생','토':'극'},'화':{'토':'생','금':'극'},'토':{'금':'생','수':'극'},'금':{'수':'생','목':'극'},'수':{'목':'생','화':'극'}};
+        if(rel[uE] && rel[uE][tE] === '생') return "기운이 살아나는 날입니다. 새로운 인연이나 소식이 기대됩니다.";
+        if(rel[uE] && rel[uE][tE] === '극') return "에너지가 소모되는 날입니다. 무리한 활동보다는 내실을 기하세요.";
+        return "평온한 하루입니다. 주변과 조화를 이루며 순리를 따르세요.";
     }
 
     function renderChart(c, col) {
@@ -274,49 +309,9 @@
         if(chart) chart.destroy();
         chart = new Chart(ctx, {
             type: 'radar',
-            data: {
-                labels: ['목','화','토','금','수'],
-                datasets: [{ data: Object.values(c), backgroundColor: col+'33', borderColor: col, borderWidth: 2, pointRadius: 3 }]
-            },
-            options: { scales: { r: { min: 0, suggestedMax: 4, ticks: { display: false } } }, plugins: { legend: { display: false } } }
+            data: { labels: ['목','화','토','금','수'], datasets: [{ data: Object.values(c), backgroundColor: col+'33', borderColor: col, borderWidth: 2, pointRadius: 3 }] },
+            options: { scales: { r: { min: 0, ticks: { display: false } } }, plugins: { legend: { display: false } } }
         });
-    }
-
-    // 자동완성 기능
-    const foodInput = document.getElementById('foodQuery');
-    const autoList = document.getElementById('autocomplete-list');
-
-    foodInput.addEventListener('input', function() {
-        const val = this.value;
-        autoList.innerHTML = '';
-        if (!val) return false;
-        const matches = allFoods.filter(f => f.includes(val));
-        matches.forEach(m => {
-            const item = document.createElement('div');
-            item.className = 'autocomplete-item';
-            item.innerHTML = `<strong>${m.substr(0, val.length)}</strong>${m.substr(val.length)}`;
-            item.addEventListener('click', function() {
-                foodInput.value = m;
-                autoList.innerHTML = '';
-                checkFoodMatch();
-            });
-            autoList.appendChild(item);
-        });
-    });
-
-    document.addEventListener('click', (e) => { if(e.target !== foodInput) autoList.innerHTML = ''; });
-
-    function checkFoodMatch() {
-        const q = foodInput.value.trim();
-        const res = document.getElementById('foodMatchResult');
-        if(!q) return;
-        const db = foodDB[currentBody];
-        const isGood = db.good.some(f => q.includes(f));
-        const isBad = db.bad.some(f => q.includes(f));
-
-        if(isGood) { res.innerHTML = `✅ <span style="color:var(--wood)">좋음:</span> ${q}(은)는 ${currentBody}에게 보약과 같습니다.`; }
-        else if(isBad) { res.innerHTML = `❌ <span style="color:var(--fire)">주의:</span> ${q}(은)는 ${currentBody}에게 해로울 수 있습니다.`; }
-        else { res.innerHTML = `🤔 <strong>알 수 없음:</strong> ${q}에 대한 정보가 없습니다. 무난히 드셔도 좋습니다.`; }
     }
 
     function saveAsImage() {
