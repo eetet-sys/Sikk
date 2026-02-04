@@ -3,176 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>식결(食結) - 마스터 정밀 운명 처방</title>
+    <title>식결 - 정밀 운명 처방 시스템</title>
     <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;500;700&display=swap');
-        :root { --paper: #f4f1ea; --ink: #2c2c2c; --wood: #5d7a66; --fire: #a64e4e; --earth: #c4a46d; --metal: #8a8a8a; --water: #4e657a; }
-        body { font-family: 'Noto Serif KR', serif; background-color: #e0ddd5; margin: 0; padding: 20px; color: var(--ink); line-height: 1.7; word-break: keep-all; }
-        .app-container { max-width: 450px; margin: auto; background: var(--paper); border: 1px solid #d1cdbf; box-shadow: 0 12px 50px rgba(0,0,0,0.12); }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Song+Myung&display=swap');
+        :root { --paper: #fdfcf8; --ink: #1a1a1a; --wood: #4A6741; --fire: #A24841; --earth: #C29A5B; --metal: #7D7D7D; --water: #3E5266; }
+        body { font-family: 'Noto Serif KR', serif; background-color: #dcd9d0; margin: 0; padding: 15px; color: var(--ink); line-height: 1.6; }
+        .app-container { max-width: 420px; margin: auto; background: var(--paper); border: 1px solid #c9c4b9; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .header { padding: 40px 20px; text-align: center; border-bottom: 1px double #d1cdbf; }
-        .header h1 { font-weight: 700; letter-spacing: 12px; margin: 0; font-size: 1.8rem; }
-        .content { padding: 30px 25px; }
-        .section-title { font-size: 0.95rem; font-weight: 700; margin: 25px 0 12px; border-left: 3px solid var(--ink); padding-left: 12px; }
-        input, select { width: 100%; border: none; border-bottom: 1px solid #bbb; background: transparent; padding: 12px 8px; margin-bottom: 15px; font-family: inherit; font-size: 1rem; outline: none; box-sizing: border-box; }
-        button { width: 100%; padding: 18px; border: 1px solid var(--ink); background: var(--ink); color: white; cursor: pointer; font-family: inherit; font-weight: 500; display: flex; justify-content: center; align-items: center; letter-spacing: 2px; transition: 0.3s; }
-        button:active { transform: scale(0.98); }
-        .food-tag { display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; margin: 5px; background: #fff; border: 1px solid #d1cdbf; cursor: pointer; border-radius: 30px; font-size: 0.85rem; font-weight: 500; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: var(--paper); width: 85%; max-width: 380px; padding: 35px; border-radius: 2px; max-height: 85vh; overflow-y: auto; text-align: center; }
-        .q-group { text-align: left; margin-bottom: 20px; }
-        .q-group b { display: block; margin-bottom: 10px; font-size: 0.95rem; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        .q-group label { display: flex; align-items: center; margin-bottom: 8px; font-size: 0.85rem; cursor: pointer; }
-        .q-group input { width: auto; margin: 0 10px 0 0; accent-color: var(--ink); flex-shrink: 0; }
-        #journalCapture { display: none; width: 400px; padding: 50px; background: var(--paper); border: 2px solid var(--ink); color: var(--ink); }
+        .header h1 { font-family: 'Song Myung', serif; font-size: 2.5rem; margin: 0; letter-spacing: 12px; }
+        .content { padding: 25px; }
+        .section-title { font-size: 0.85rem; font-weight: 700; margin: 20px 0 10px; border-left: 3px solid var(--ink); padding-left: 10px; }
+        input, select { width: 100%; border: none; border-bottom: 1px solid #d1cdbf; background: transparent; padding: 10px 5px; margin-bottom: 15px; font-family: inherit; font-size: 0.9rem; outline: none; box-sizing: border-box; }
+        button { width: 100%; padding: 18px; background: var(--ink); color: #fff; border: none; font-weight: 700; cursor: pointer; letter-spacing: 2px; margin-top: 10px; }
+        #prescriptionCard { display: none; background: var(--paper); padding: 30px; border: 8px double #d1cdbf; margin: 20px; text-align: center; }
+        .tag-box { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 15px 0; }
+        .food-tag { padding: 5px 12px; border: 1px solid #d1cdbf; font-size: 0.8rem; border-radius: 20px; background: #fff; cursor: pointer; }
+        .warning-box { font-size: 0.75rem; color: #a24841; background: #fdf2f2; padding: 12px; border-radius: 4px; text-align: left; margin-top: 15px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; justify-content: center; align-items: center; }
+        .modal-content { background: #fff; padding: 30px; width: 80%; max-width: 320px; }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <div class="header">
-        <h1>食 結</h1>
-        <p style="font-size:0.8rem; color:#777;">사주·체질·컨디션의 완벽한 조화</p>
-    </div>
-
-    <div class="content">
-        <input type="text" id="userNameInput" placeholder="성함 또는 호">
-        <div class="section-title">출생 정보 및 도시</div>
-        <input type="date" id="birthDate" value="1995-01-01">
-        <select id="birthCity">
-            <option value="127.0">서울/경기 (표준)</option>
-            <option value="129.0">부산/울산 (+8분)</option>
-            <option value="126.5">인천/제주 (-2분)</option>
-            <option value="128.6">대구/경북 (+6분)</option>
-            <option value="127.4">대전/충청 (+2분)</option>
-        </select>
-        <select id="birthTime">
-            <option value="0">子시 (23:30 ~ 01:29)</option><option value="2">丑시 (01:30 ~ 03:29)</option>
-            <option value="4">寅시 (03:30 ~ 05:29)</option><option value="6">卯시 (05:30 ~ 07:29)</option>
-            <option value="8">辰시 (07:30 ~ 09:29)</option><option value="10">巳시 (09:30 ~ 11:29)</option>
-            <option value="12">午시 (11:30 ~ 13:29)</option><option value="14">未시 (13:30 ~ 15:29)</option>
-            <option value="16">申시 (15:30 ~ 17:29)</option><option value="18">酉시 (17:30 ~ 19:29)</option>
-            <option value="20">戌시 (19:30 ~ 21:29)</option><option value="22">亥시 (21:30 ~ 23:29)</option>
-        </select>
-
-        <button onclick="openModal()">정밀 분석 및 처방 시작</button>
-
-        <div id="resultArea" style="display:none; margin-top:40px; border-top:2px solid var(--ink); padding-top:30px;">
-            <div id="dailyInfo" style="text-align:center; font-size:0.85rem; color:#888; margin-bottom:15px;"></div>
-            
-            <div class="section-title">메뉴 궁합 직접 진단</div>
-            <div style="display: flex; gap: 8px;">
-                <input type="text" id="userFoodInput" placeholder="메뉴 입력 (예: 마라탕)" style="margin-bottom:0;">
-                <button onclick="checkFoodHarmony()" style="width: 85px; padding: 12px; margin-top:0; font-size:0.9rem;">진단</button>
-            </div>
-            <div id="harmonyResult" style="margin: 15px 0; font-size: 0.85rem; font-weight: 700; text-align:center;"></div>
-
-            <div style="height:260px; margin:20px 0;"><canvas id="energyChart"></canvas></div>
-            
-            <div id="foodBox" style="background: rgba(0,0,0,0.02); padding: 25px; border-radius: 2px; margin: 25px 0; border: 1px solid rgba(0,0,0,0.05);">
-                <div id="resTitle" style="font-size:1.3rem; font-weight:700; color:var(--fire); margin-bottom:12px;"></div>
-                <div id="resDesc" style="font-size:0.9rem; color:#666; margin-bottom:18px;"></div>
-                <div id="resFoodList"></div>
-            </div>
-            
-            <button style="background:#fff; color:var(--ink);" onclick="searchMap()">📍 주변 맛집 추천</button>
-            <button onclick="saveJournal()" style="background:#8e735b; border:none; margin-top:10px;">📜 오늘의 식결 일기 저장</button>
+<div class="app-container" id="captureArea">
+    <div id="inputForm">
+        <div class="header"><h1>食 結</h1><p>정밀 시차 및 체질 통합 분석</p></div>
+        <div class="content">
+            <input type="text" id="userName" placeholder="성함 또는 호(號)">
+            <div class="section-title">생년월일 및 탄생 지역</div>
+            <input type="date" id="birthDate" value="1995-01-01">
+            <select id="birthCity">
+                <option value="126.5">제주, 목포, 진도 (-4분)</option>
+                <option value="126.7">인천, 서산, 강화 (-3분)</option>
+                <option value="127.0" selected>서울, 경기, 광주, 전주 (기준 0분)</option>
+                <option value="127.3">대전, 천안, 세종, 청주 (+1분)</option>
+                <option value="127.5">원주, 충주, 순천, 여수 (+2분)</option>
+                <option value="127.8">춘천, 안동, 구미 (+3분)</option>
+                <option value="128.2">대구, 상주, 진주 (+5분)</option>
+                <option value="128.6">부산, 창원, 거제 (+6분)</option>
+                <option value="129.0">울산, 포항, 강릉 (+8분)</option>
+                <option value="129.4">울릉도, 독도 (+10분)</option>
+            </select>
+            <select id="birthTime">
+                <option value="0">子시 (23:30~)</option><option value="2">丑시 (01:30~)</option>
+                <option value="4">寅시 (03:30~)</option><option value="6">卯시 (05:30~)</option>
+                <option value="8">辰시 (07:30~)</option><option value="10">巳시 (09:30~)</option>
+                <option value="12">午시 (11:30~)</option><option value="14">未시 (13:30~)</option>
+                <option value="16">申시 (15:30~)</option><option value="18">酉시 (17:30~)</option>
+                <option value="20">戌시 (19:30~)</option><option value="22">亥시 (21:30~)</option>
+            </select>
+            <button onclick="showModal()">처방전 생성</button>
         </div>
     </div>
+
+    <div id="prescriptionCard">
+        <div id="cardMeta" style="font-size: 0.7rem; color: #999; margin-bottom: 15px;"></div>
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--earth);" id="resBody"></div>
+        <h2 id="resTitle" style="font-family: 'Song Myung', serif; font-size: 1.8rem; margin: 10px 0;"></h2>
+        <div style="height: 180px; margin-bottom: 15px;"><canvas id="energyChart"></canvas></div>
+        <div id="resDesc" style="font-size: 0.85rem; color: #555; margin-bottom: 15px;"></div>
+        <div class="tag-box" id="resFoods"></div>
+        <div class="warning-box" id="resWarning"></div>
+        <div style="margin-top: 20px; font-size: 0.6rem; color: #ccc; letter-spacing: 3px;">SHIK-GYUL DIETARY SYSTEM</div>
+    </div>
+</div>
+
+<div style="max-width:420px; margin: auto; padding: 0 15px 40px;">
+    <button id="saveBtn" style="display:none; background: var(--wood);" onclick="saveAsImage()">📸 처방전 이미지 저장</button>
 </div>
 
 <div id="diagModal" class="modal">
     <div class="modal-content">
-        <h3>실시간 컨디션 & 체질 진단</h3>
-        <div class="q-group">
-            <b>1. 체격과 체중 변화는?</b>
-            <label><input type="radio" name="qBody" value="태음인"> 체구가 크고 살이 쉽게 찌는 편</label>
-            <label><input type="radio" name="qBody" value="소음인"> 체구가 작고 살이 잘 안 찌는 편</label>
-            <label><input type="radio" name="qBody" value="소양인"> 상체 발달, 하체가 가벼운 편</label>
+        <h3 style="margin-top:0;">정밀 체질 확인</h3>
+        <p style="font-size:0.8rem; color:#666;">본인의 신체적 특징을 선택해 주세요.</p>
+        <div style="text-align:left; font-size:0.9rem;">
+            <label><input type="radio" name="qBody" value="태음인" checked> 허리가 발달하고 체구가 듬직함</label><br><br>
+            <label><input type="radio" name="qBody" value="소음인"> 하체가 발달하고 상체가 가냘픔</label><br><br>
+            <label><input type="radio" name="qBody" value="소양인"> 상체가 발달하고 걸음이 빠름</label>
         </div>
-        <div class="q-group">
-            <b>2. 현재의 스트레스 상태는?</b>
-            <label><input type="radio" name="qStress" value="high"> 스트레스 높음 (답답함)</label>
-            <label><input type="radio" name="qStress" value="low"> 평온함 (안정됨)</label>
-        </div>
-        <div class="q-group">
-            <b>3. 어제 수면의 질은?</b>
-            <label><input type="radio" name="qSleep" value="bad"> 수면 부족 (피곤함)</label>
-            <label><input type="radio" name="qSleep" value="good"> 충분한 휴식 (개운함)</label>
-        </div>
-        <button onclick="finishDiag()">분석 완료</button>
+        <button onclick="startAnalysis()" style="margin-top:20px;">분석 시작</button>
     </div>
 </div>
 
 <script>
-    let chart=null, baseCounts={}, currentLack='';
-    const foodFiveElements = { '치킨':'목', '샐러드':'목', '마라탕':'화', '피자':'화', '삼겹살':'수', '회':'수', '베이글':'토', '돈카츠':'금' };
-    const foodEffects = { 
-        '그릭 요거트':'간 해독과 생기를 깨웁니다.', 
-        '마라탕':'심장 순환을 돕고 스트레스를 풉니다.', 
-        '들기름 막국수':'위장의 열을 내리고 소화를 돕습니다.', 
-        '트러플 리조또':'폐 기운을 강화하고 면역력을 높입니다.',
-        '평양냉면':'신장 원기를 보하고 노화를 방지합니다.'
-    };
-    const data = {
-        '목': { t:'木: 푸른 생기', desc:'간(肝)을 보하고 근육 피로를 푸는 처방입니다.', f:{base:['그릭 요거트','바질 파스타'], spring:['미나리 삼겹살']}, c:'#5d7a66', k:'포케 맛집' },
-        '화': { t:'火: 붉은 온기', desc:'심장(心) 순환을 돕고 화기를 다스리는 처방입니다.', f:{base:['마라탕','육회 비빔밥'], summer:['물회']}, c:'#a64e4e', k:'마라탕 맛집' },
-        '토': { t:'土: 황색 중심', desc:'비장(脾)을 보강하고 기력을 안착시키는 처방입니다.', f:{base:['들기름 막국수','베이글'], autumn:['밤 티라미수']}, c:'#c4a46d', k:'베이글 맛집' },
-        '금': { t:'金: 백색 결실', desc:'폐(肺) 기운을 다지고 면역을 높이는 처방입니다.', f:{base:['닭한마리','트러플 리조또'], winter:['조개술찜']}, c:'#8a8a8a', k:'닭한마리 맛집' },
-        '수': { t:'水: 검은 지혜', desc:'신장(腎) 원기를 채우고 열을 식히는 처방입니다.', f:{base:['평양냉면','돈카츠'], winter:['방어회']}, c:'#4e657a', k:'평양냉면 맛집' }
+    let chart=null;
+    const elementMap = {'甲':'목','乙':'목','寅':'목','卯':'목','丙':'화','丁':'화','巳':'화','午':'화','戊':'토','己':'토','辰':'토','戌':'토','丑':'토','未':'토','庚':'금','辛':'금','申':'금','酉':'금','壬':'수','癸':'수','亥':'수','子':'수'};
+    const hansiDB = {
+        '목': { name: '木 (청량한 생기)', color: '#4A6741', desc: '간 기운을 돕고 피로를 해소하는 생기가 필요합니다.', foods: ['냉이국', '부추전', '미나리무침', '비빔밥', '애플민트차'] },
+        '화': { name: '火 (따뜻한 에너지)', color: '#A24841', desc: '심장 순환을 활발히 하고 정체된 기운을 깨워야 합니다.', foods: ['김치찌개', '제육볶음', '육개장', '순두부찌개', '자몽에이드'] },
+        '토': { name: '土 (안정의 중심)', color: '#C29A5B', desc: '위장을 편안하게 다스리고 기운을 안착시켜야 합니다.', foods: ['된장찌개', '청국장', '소고기뭇국', '감자조림', '식혜'] },
+        '금': { name: '金 (단단한 결실)', color: '#7D7D7D', desc: '폐를 보호하고 면역력을 높여 몸을 단단히 맺어야 합니다.', foods: ['닭한마리', '생선구이', '배숙', '마늘보쌈', '무국'] },
+        '수': { name: '水 (깊은 휴식)', color: '#3E5266', desc: '신장 원기를 보충하고 몸의 열을 식혀야 하는 때입니다.', foods: ['미역국', '평양냉면', '보쌈', '검은콩자반', '김구이'] }
     };
 
-    function openModal() { document.getElementById('diagModal').style.display = 'flex'; }
+    function showModal() { document.getElementById('diagModal').style.display='flex'; }
 
-    function finishDiag() {
-        const body = document.querySelector('input[name="qBody"]:checked');
-        const stress = document.querySelector('input[name="qStress"]:checked');
-        const sleep = document.querySelector('input[name="qSleep"]:checked');
-        if(!body || !stress || !sleep) return alert("항목을 모두 선택해주세요.");
-        document.getElementById('diagModal').style.display = 'none';
-        analyze(body.value, stress.value, sleep.value);
-    }
-
-    function analyze(body, stress, sleep) {
+    function startAnalysis() {
+        const name = document.getElementById('userName').value || '익명';
+        const body = document.querySelector('input[name="qBody"]:checked').value;
         const b = document.getElementById('birthDate').value;
+        const cityLng = parseFloat(document.getElementById('birthCity').value);
         const time = parseInt(document.getElementById('birthTime').value);
-        const solar = Solar.fromYmdHms(new Date(b).getFullYear(), new Date(b).getMonth()+1, new Date(b).getDate(), time, 0, 0);
+        
+        document.getElementById('diagModal').style.display='none';
+        document.getElementById('inputForm').style.display='none';
+
+        // 1. 정밀 시차 보정
+        const offsetMin = Math.round((cityLng - 127.0) * 4);
+        const adjustedDate = new Date(new Date(b).getTime() + (time * 60 + offsetMin) * 60000);
+        
+        // 2. 사주 8자 + 오늘 2자 분석 (총 10자)
+        const solar = Solar.fromDate(adjustedDate);
+        const eightChar = solar.getLunar().getEightChar();
         const tLunar = Solar.fromDate(new Date()).getLunar();
-        const map = {'甲':'목','乙':'목','寅':'목','卯':'목','丙':'화','丁':'화','巳':'화','午':'화','戊':'토','己':'토','辰':'토','戌':'토','丑':'토','未':'토','庚':'금','辛':'금','申':'금','酉':'금','壬':'수','癸':'수','亥':'수','子':'수'};
         
-        baseCounts = {'목':0,'화':0,'토':0,'금':0,'수':0};
-        const my8 = solar.getLunar().getEightChar();
-        [my8.getYearGan(),my8.getYearZhi(),my8.getMonthGan(),my8.getMonthZhi(),my8.getDayGan(),my8.getDayZhi(),my8.getTimeGan(),my8.getTimeZhi(),tLunar.getDayGan(),tLunar.getDayZhi()].forEach(c => { if(map[c]) baseCounts[map[c]]++; });
-        
-        currentLack = Object.entries(baseCounts).sort((a,b) => a[1]-b[1])[0][0];
+        let counts = {'목':0,'화':0,'토':0,'금':0,'수':0};
+        const chars = [eightChar.getYearGan(), eightChar.getYearZhi(), eightChar.getMonthGan(), eightChar.getMonthZhi(),
+                       eightChar.getDayGan(), eightChar.getDayZhi(), eightChar.getTimeGan(), eightChar.getTimeZhi(),
+                       tLunar.getDayGan(), tLunar.getDayZhi()];
+        chars.forEach(c => { if(elementMap[c]) counts[elementMap[c]]++; });
 
-        let advice = `${body} 체질이시군요. `;
-        if(stress === 'high') advice += "현재 높은 스트레스로 화기가 상충하니 차분한 식단이 길합니다. ";
-        if(sleep === 'bad') advice += "부족한 수면으로 고갈된 수기를 보충해야 합니다.";
+        const lack = Object.entries(counts).sort((a,b)=>a[1]-b[1])[0][0];
 
-        document.getElementById('dailyInfo').innerText = `${body} | 스트레스 ${stress==='high'?'높음':'안정'} | ${tLunar.getDayInGanZhi()}일`;
-        document.getElementById('resTitle').innerText = data[currentLack].t;
-        document.getElementById('resDesc').innerHTML = `<b>[정밀 진단]</b> ${advice}<br><br>${data[currentLack].desc}`;
+        // 3. UI 업데이트
+        document.getElementById('cardMeta').innerText = `${new Date().toLocaleDateString()} | ${name} 님`;
+        document.getElementById('resBody').innerText = `[${body}]`;
+        document.getElementById('resTitle').innerText = hansiDB[lack].name;
+        document.getElementById('resTitle').style.color = hansiDB[lack].color;
+        document.getElementById('resDesc').innerText = hansiDB[lack].desc;
+        document.getElementById('resFoods').innerHTML = hansiDB[lack].foods.map(f => `<span class="food-tag">#${f}</span>`).join('');
         
-        const m = new Date().getMonth()+1;
-        const season = (m>=3&&m<=5)?'spring':(m>=6&&m<=8)?'summer':(m>=9&&m<=11)?'autumn':'winter';
-        const foods = [...(data[currentLack].f[season] || []), ...data[currentLack].f.base];
-        document.getElementById('resFoodList').innerHTML = foods.map(f => `<span class="food-tag" onclick="alert('${f}: ${foodEffects[f]||'맞춤 영양 식단입니다.'}')">#${f}</span>`).join('');
-        
-        renderChart(baseCounts);
-        document.getElementById('resultArea').style.display = 'block';
-    }
+        const warnings = {
+            '태음인': '태음인은 습(濕)이 쌓이면 몸이 무거워지니 과식과 기름진 고기를 피하세요.',
+            '소음인': '소음인은 비위가 차가우니 찬 물이나 성질이 찬 과일(참외 등)을 주의하세요.',
+            '소양인': '소양인은 열이 오르기 쉬우니 맵고 자극적인 보양식보다는 담백한 식단이 좋습니다.'
+        };
+        document.getElementById('resWarning').innerText = `⚠️ 주의: ${warnings[body]}`;
 
-    function checkFoodHarmony() {
-        const input = document.getElementById('userFoodInput').value.trim();
-        if(!input) return;
-        let energy = '알 수 없음';
-        for(let key in foodFiveElements) { if(input.includes(key)) { energy = foodFiveElements[key]; break; } }
-        const res = document.getElementById('harmonyResult');
-        if(energy === currentLack) { res.innerText = `✅ ${input}은(는) 부족한 ${energy} 기운을 채워주는 찰떡궁합입니다!`; res.style.color="var(--wood)"; }
-        else { res.innerText = `🧐 ${input}은(는) ${energy} 기운이 강합니다. 부족한 ${currentLack} 기운도 함께 드세요.`; res.style.color="var(--ink)"; }
+        renderChart(counts);
+        document.getElementById('prescriptionCard').style.display = 'block';
+        document.getElementById('saveBtn').style.display = 'block';
     }
 
     function renderChart(c) {
@@ -180,19 +153,25 @@
         if(chart) chart.destroy();
         chart = new Chart(ctx, {
             type: 'radar',
-            data: { labels: ['목','화','토','금','수'], datasets: [{ data: Object.values(c), backgroundColor: 'rgba(0,0,0,0.05)', borderColor: '#2c2c2c', borderWidth: 1.5 }] },
-            options: { scales: { r: { beginAtZero: true, max: 8, ticks: { display: false } } }, plugins: { legend: { display: false } } }
+            data: {
+                labels: ['목','화','토','금','수'],
+                datasets: [{
+                    data: [c['목'], c['화'], c['토'], c['금'], c['수']],
+                    backgroundColor: 'rgba(0,0,0,0.02)', borderColor: '#1a1a1a', borderWidth: 1, pointRadius: 2
+                }]
+            },
+            options: { scales: { r: { min: 0, max: 6, ticks: { display: false } } }, plugins: { legend: { display: false } } }
         });
     }
 
-    function saveJournal() {
-        const target = document.body;
-        html2canvas(target).then(canvas => {
-            const a = document.createElement('a'); a.download = '식결_오늘의처방.png'; a.href = canvas.toDataURL(); a.click();
+    function saveAsImage() {
+        html2canvas(document.getElementById('prescriptionCard')).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `식결_처방전_${new Date().getTime()}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
         });
     }
-
-    function searchMap() { window.open(`https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(data[currentLack].k)}`, '_blank'); }
 </script>
 </body>
 </html>
